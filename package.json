@@ -1,5 +1,5 @@
 {
-  "proxy": "https://mern-beryl-six.vercel.app",
+  "proxy": "http://localhost:8000",
   "name": "mern-project",
   "version": "0.1.0",
   "private": true,

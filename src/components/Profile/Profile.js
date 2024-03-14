@@ -4,6 +4,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import profile from '../../assets/images/profile.png';
 import { ToastContainer, toast } from 'react-toastify';
 import ChangePassword from '../Popup/ChangePassword';
+import axios from 'axios';
+import { baseurl } from '../../api/baseUrl';
 
 function Profile() {
     const [changePassword, setChangePassword] = useState(false);
@@ -12,15 +14,22 @@ function Profile() {
 		lastName: "",
 	  };
 	const [details, setDetails] = useState(initalState);
+	let token = localStorage.getItem("token");
 	const [profileImage, setProfileImage] = useState(null);
 	const navigate = useNavigate();
 	const getProfile = async () => {
-		// try {
-		//   let response = await dispatch(getProfileDetails()).unwrap();
-		//   setDetails(response.data.Data);
-		// } catch (error) {
-		//   console.log(error);
-		// }
+		try {
+			let response = await axios.get(`${baseurl}/profile/getprofile`,{
+				headers: {
+				  Authorization: `Bearer ${token}`
+				}
+			  })
+			  if(response.data.Data != 0){
+				  setDetails(response.data.Data);
+			  }
+		} catch (error) {
+		  console.log(error);
+		}
 	  };
 	  useEffect(() => {
 		getProfile();
@@ -51,7 +60,6 @@ function Profile() {
     return (
         <div className="wrapper min-h-full">
             <div className="flex items-center sticky top-0 justify-between py-2 px-3 z-10">
-            
                <Link to={"/dashboard"}><button type='button' className="text-3xl font-bold text-yankeesBlue leading-8 pl-7"><i className="fa-solid fa-arrow-left"></i> {details.firstName}'s Account Details</button></Link> 
             </div>
             <div className="pt-[50px]">
@@ -100,11 +108,7 @@ function Profile() {
                                     <input type="password" name="" className="relative input_box2 placeholder:text-[#94A3B8] placeholder:text-base" placeholder='**** **** ****' disabled />
                                     <span onClick={() => setChangePassword(true)} className='absolute right-6 top-1/2 -translate-y-1/2 text-[#29A073] text-base font-extrabold cursor-pointer'>Change password</span>
                                 </div>
-                            </div>
-							<div className='w-1/2'>
-                                <label htmlFor="" className="input-title2">My Refer Code</label>
-                                <input type="text" name="" className="input_box2 placeholder:text-[#94A3B8] placeholder:text-base" value={details?.referCode} placeholder='' disabled />
-                            </div>
+                            </div>	
                         </div>
 						<div className='className="w-full flex justify-end space-x-6 mb-7'>
 						<button className="btn-primary small mr-3 text-[#fff]"

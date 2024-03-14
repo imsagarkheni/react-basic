@@ -8,29 +8,33 @@ import Dashboard from '../Dashboard/Dashboard';
 import { ToastContainer, toast } from 'react-toastify';
 import Modal from '../../common/Modals/Modal';
 import Profile from '../Profile/Profile';
+import Employee from '../Employee/Employee';
 
 function SideBar() {
 	const navigate = useNavigate();
     const [details, setDetails] = useState({});
-    const [users, setUsers] = useState(false);
+	let token = localStorage.getItem("token");
 	const getProfile = async () => {
-		// try {
-		//   let response = await dispatch(getProfileDetails()).unwrap();
-		//   setDetails(response.data.Data);
-		// } catch (error) {
-		//   console.log(error);
-		// }
+		try {
+		  let response = await axios.get(`${baseurl}/profile/getprofile`,{
+			headers: {
+			  Authorization: `Bearer ${token}`
+			}
+		  })
+		  if(response.data.Data != 0){
+			  setDetails(response.data.Data);
+		  }
+		} catch (error) {
+		  console.log(error);
+		}
 	  };
 	  useEffect(() => {
 		getProfile();
-	  }, [users]);
-	  console.log("details",details);
+	  }, []);
+
 const handleLogout = () => {
-	setTimeout(() => {
-		// dispatch(removeToken());
-    	localStorage.clear();
-	}, 1000);
-	toast.success("Logout Successfully.");
+    localStorage.clear();
+	navigate(`../login`);
   }
 	return (
 		<div className="main flex min-h-screen bg-slate">
@@ -46,8 +50,14 @@ const handleLogout = () => {
 							<span className="text-sm font-bold leading-5  pl-[13px]">Dashboard</span>
 						</NavLink>
 					</nav>
+					<nav className="SideNav px-[24px]">
+						<NavLink to="../employee" activeclassname="active" className="SideLink flex items-center rounded-lg px-[18px] py-4 text-lightGray ">
+						<i className="fa-solid fa-user"></i>
+							<span className="text-sm font-bold leading-5  pl-[13px]">Employee</span>
+						</NavLink>
+					</nav>
 					<div className="mt-auto px-[24px] mb-[80px]">
-						<Link to="../faq" className="SideLink flex items-center rounded-lg px-[18px] py-3.5 text-lightGray">
+						<Link to="../dashboard" className="SideLink flex items-center rounded-lg px-[18px] py-3.5 text-lightGray">
 						<i class="fa-solid fa-circle-info"></i>
 							<span className="text-sm font-bold leading-5 pl-[13px]">Help</span>
 						</Link>
@@ -65,9 +75,6 @@ const handleLogout = () => {
 					<div className="w-full flex justify-between items-center ">
 						<h2 className='block font-bold leading-[48px] text-[#0F172A]'></h2>
 						<div className="flex items-center space-x-10">
-							<button onClick={() => setUsers(true)}><i class="fa-solid fa-user-group fa-xl"></i></button>
-							{/* <button onClick={() => setUsers(true)}><i class="fa-solid fa-user-plus fa-xl"></i></button> */}
-							<button onClick={()=>navigate('/cart')}><i className="fa-solid fa-cart-shopping fa-xl"></i></button>
 							<button type="button" className="relative flex items-center bg-azureishWhite rounded-full py-[6px] px-4 group">
 								<div className="relative">
 									<div className="flex items-center">
@@ -75,7 +82,7 @@ const handleLogout = () => {
 											<div className="w-9 h-9 overflow-hidden rounded-full bg-white">
 												<img src={(profileImage)} alt="Profile Avatar" className='w-full h-full object-cover object-top' />
 											</div>
-											<span className="block text-left max-w-[120px] min-w-[120px] w-full text-sm font-bold leading-5 text-[#1E293B] ml-3 truncate">Sagar</span>
+											<span className="block text-left max-w-[120px] min-w-[120px] w-full text-sm font-bold leading-5 text-[#1E293B] ml-3 truncate">{details.firstName} {details.lastName}</span>
 										</div>
 										<i className="fa-solid fa-arrow-left"></i>
 									</div>
@@ -98,6 +105,7 @@ const handleLogout = () => {
 							<Route index element={<Dashboard />} />
 						</Route>
 						<Route path="profile" element={<Profile />} />
+						<Route path="employee" element={<Employee />} />
 					</Routes>
 				</div>
 			</div>

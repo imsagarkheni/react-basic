@@ -8,6 +8,8 @@ import * as Yup from 'yup';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { ToastContainer, toast } from 'react-toastify'
 import "react-toastify/dist/ReactToastify.css";
+import axios from 'axios'
+import { baseurl } from '../../api/baseUrl'
 
 
 
@@ -33,23 +35,23 @@ const Register = () => {
 	});
 
 	const handelRegister = async (values) => {
-			// if (values.password !== values.password2) {
-			// 	toast.warn("confirm password and password is not matching");
-			// 	return;
-			//   }
-			//   try {
-			// 	let payload = Object.assign({}, values);
-			// 	const response = await dispatch(registration(payload)).unwrap();
-			// 	console.log(response);
-			// 	if (response.data?.IsSuccess) {
-			// 	  toast.success(response.data.Message);
-			// 	  navigate(`../verificationcode/${values.mobileNo}/${true}`);
-			// 	} else {
-			// 	  toast.error(response.data?.Message);
-			// 	}
-			//   } catch (error) {
-			// 	toast.error('Something went wrong!!!');
-			//   }
+			if (values.password !== values.password2) {
+				toast.warn("confirm password and password is not matching");
+				return;
+			  }
+			  try {
+				let payload = Object.assign({}, values);
+				const response = await axios.post(`${baseurl}/register`,payload)
+				console.log(response);
+				if (response.data?.IsSuccess) {
+				  toast.success(response.data.Message);
+				  navigate(`../login`);
+				} else {
+				  toast.error(response.data?.Message);
+				}
+			  } catch (error) {
+				toast.error('Something went wrong!!!');
+			  }
 	}
 	return (
 		<div className="flex h-screen">
